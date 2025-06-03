@@ -23,7 +23,7 @@ public:
     static int selectProvider(int index);
     static int selectScope(transformScope txScope);
     static void doTransform();
-    static bool renameFiles();
+    static QString renameFiles();
     static QStringList createTargetUrls();
     static bool sortSourceUrls(bool reverseAlphabetical);
     static bool transformIsOrderDependent();
@@ -36,7 +36,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     void setFileNames(QStringList sourceFileNames, QStringList targetFileNames);
     Qt::DropActions supportedDropActions() const override;
-    bool moveRows(const QModelIndex& parent1, int source_first, int source_last, const QModelIndex& parent2, int dest) override;
+    bool moveRows(const QModelIndex& parent1, int source_first, int count, const QModelIndex& parent2, int dest) override;
 
 private:
     // TransformEngine() {}    //Static/singleton- not instanced

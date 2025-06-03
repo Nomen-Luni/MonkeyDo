@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QFileDialog>
+#include <QMessageBox>
 #include "AboutDialog/AboutDialog.h"
 
 //Transform providers
@@ -21,12 +22,7 @@ MainWindow::MainWindow(QWidget *parent, QApplication* app)
     setWindowIcon(QIcon::fromTheme(QStringLiteral("edit-rename")));
 
     connect(ui->closePushButton, &QPushButton::clicked, app, &QCoreApplication::quit, Qt::QueuedConnection);
-
     ui->fileNamesTableView->setModel(&transformEngine);
-    //auto fileNamesTableSortSignal = ui->fileNamesTableView->horizontalHeader.sortIndicatorChanged;
-    //connect(ui->fileNamesTableView,&QHeaderView::sortIndicatorChanged,this,this->on_TableNameHeaderClicked(0));
-
-    //auto tableNameHeader=ui->fileNamesTableView->horizontalHeader();
     connect(ui->fileNamesTableView->horizontalHeader(),
                 &QHeaderView::sortIndicatorChanged, this, &MainWindow::tableSortOrderChanged);
 
@@ -79,7 +75,7 @@ void MainWindow::on_AddPushButton_clicked()
     QFileDialog fileDialog(this);
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     fileDialog.setNameFilter(tr("Any file (*.*)"));
-    fileDialog.setDirectory("/home/lee/Code/Bionic-Batch-Renamer/Temp - Test/");
+    fileDialog.setDirectory("/mnt/Data/Computing/Programming/Code/Temp - Test/");
 
     //fileDialog.setOption(QFileDialog::DontUseNativeDialog, true); // Makes no difference
 
@@ -108,12 +104,20 @@ void MainWindow::on_RemovePushButton_clicked()
 void MainWindow::on_clearPushButton_clicked()
 {
     TransformEngine::clearSourceUrls();
-    //ui->fileNamesTableView->clearContents();
+    updateFileNamesTable();
 }
 
 void MainWindow::on_renamePushButton_clicked()
 {
-    TransformEngine::renameFiles();
+    QString errorString=TransformEngine::renameFiles();
+    if (errorString!="")
+    {
+        QMessageBox msg;
+        msg.setText(errorString);
+        msg.exec();
+        return;
+    }
+
     updateFileNamesTable();
 }
 
@@ -125,7 +129,7 @@ void MainWindow::on_aboutButton_clicked()
 
 void MainWindow::on_targetComboBox_currentIndexChanged(int index)
 {
-    (void)index;
+    // (void)index;
     TransformEngine::selectScope((transformScope)index);
     doTransforms();
 }

@@ -8,7 +8,7 @@
 //Definition of variables declared private static in header
 int TransformEngine::numProviders=0;
 int TransformEngine::selectedProviderIndex=0;
-transformScope TransformEngine::scope;
+transformScope TransformEngine::scope=transformScope::name_only;
 TransformProvider* TransformEngine::transformProviders[maxTransformProviders];
 QStringList TransformEngine::sourceFileNamesList;
 QStringList TransformEngine::targetFileNamesList;
@@ -112,29 +112,13 @@ QStringList TransformEngine::createTargetUrls()
     return targetUrls;
 }
 
-bool TransformEngine::renameFiles()
+QString TransformEngine::renameFiles()
 {
     // bool success;
     QStringList targetUrlsList=TransformEngine::createTargetUrls();
 
-    FileOperation::renameFiles(sourceUrlsList, targetUrlsList);
-    //Test renames virtually before moving any files - identifies name clashes and illegal file names
-    /*
-    FileSystemOverlay fsOverlay;
-    for (int index=0; index<sourceUrlsList.length(); index++)
-    {
-        success=fsOverlay.renameFile(sourceUrlsList[index],TargetUrls[index], true);
-        if (success==false) return false;
-    }
-
-    for (int index=0; index<sourceUrlsList.length(); index++)
-    {
-        QFile sourcefile(sourceUrlsList[index]);
-        if (sourceUrlsList[index]==TargetUrls[index]) continue; //No change to filename
-        success=sourcefile.rename(TargetUrls[index]);
-        if (success==false) return false;
-    }
-    */
+    QString errorString=FileOperation::renameFiles(sourceUrlsList, targetUrlsList);
+    if (errorString!="") return errorString;
 
     //Update our stored source file names to match the renamed file names
     sourceUrlsList.clear();
@@ -148,7 +132,7 @@ bool TransformEngine::renameFiles()
         sourceFileNamesList.append(targetFileName);
     }
 
-    return true;
+    return "";
 }
 
 bool TransformEngine::sortSourceUrls(bool reverseAlphabetical)
@@ -200,6 +184,10 @@ QVariant TransformEngine::data(const QModelIndex &index, int role) const
         else
             return targetFileNamesList[index.row()];
     }
+    else if ((role == Qt::DecorationRole) && (index.column() == 0))
+    {
+        return QIcon::fromTheme("folder");
+    }
 
     return QVariant();
 }
@@ -222,7 +210,7 @@ Qt::ItemFlags TransformEngine::flags(const QModelIndex &index) const
     Qt::ItemFlags flag = QAbstractItemModel::flags(index);
 
     if (index.isValid()) {
-        return flag | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+        return (flag | Qt::ItemIsDragEnabled) & (~Qt::ItemIsDropEnabled);
     } else {
         return flag | Qt::ItemIsDropEnabled;
     }
@@ -241,8 +229,10 @@ Qt::DropActions TransformEngine::supportedDropActions() const
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int source_last, const QModelIndex& parent2, int dest)
+bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int count, const QModelIndex& parent2, int dest)
 {
+
+    qDebug("source_first (%i) count (%i) dest (%i)", source_first, count, dest);
     if (source_first==dest) return false;
 
     //beginMoveRows(parent1, source_first, source_last, parent2, dest);
@@ -264,9 +254,23 @@ bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int
     */
 
     // Re-order source file names list
-    auto sourceVal=this->sourceFileNamesList[source_first];
-    this->sourceFileNamesList.removeAt(source_first);
-    this->sourceFileNamesList.insert(dest,sourceVal);
+
+    QStringList removed;
+    for (int c=0; c<count; c++)
+    {
+        auto sourceVal=this->sourceFileNamesList[source_first]; // we don't add c since every individual remove shuffles things down
+        this->sourceFileNamesList.removeAt(source_first);
+        removed.append(sourceVal);
+    }
+
+    if (dest>source_first)
+    {
+        dest-=count;
+    }
+    for (int c=0; c<count; c++)
+    {
+        this->sourceFileNamesList.insert(dest+c,removed[c]);
+    }
 
     if (TransformEngine::transformIsOrderDependent())
     {
@@ -276,9 +280,9 @@ bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int
     else
     {
         // Re-order target file names list
-        sourceVal=this->targetFileNamesList[source_first];
-        this->targetFileNamesList.removeAt(source_first);
-        this->targetFileNamesList.insert(dest,sourceVal);
+        // sourceVal=this->targetFileNamesList[source_first];
+        // this->targetFileNamesList.removeAt(source_first);
+        // this->targetFileNamesList.insert(dest,sourceVal);
     }
 
     /*
