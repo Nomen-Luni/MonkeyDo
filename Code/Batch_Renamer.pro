@@ -25,8 +25,7 @@ SOURCES += \
     FileOperation/FileOperation.cpp \
     FileSystemOverlay/FileSystemOverlay.cpp \
     Styling/SingleClickWorkaroundProxyStyle.cpp \
-    DragTableView/DragTableView.cpp \
-    FileNameTableModel/FileNameTableModel.cpp
+    DragTableView/DragTableView.cpp
     
 HEADERS += \
     version.h\
@@ -44,8 +43,7 @@ HEADERS += \
     FileOperation/FileOperation.h \
     FileSystemOverlay/FileSystemOverlay.h\
     Styling/SingleClickWorkaroundProxyStyle.h \
-    DragTableView/DragTableView.h \
-    FileNameTableModel/FileNameTableModel.h
+    DragTableView/DragTableView.h
     
 FORMS += \
     MainWindow/MainWindow.ui \
@@ -57,9 +55,9 @@ FORMS += \
     TransformProviders/TransformProvider_SearchReplace.ui \
     AboutDialog/AboutDialog.ui
 
-# TODO: Had to include this to clear an error - is this the right way?
+# Include to support reading image metadata
 INCLUDEPATH += /usr/include/KExiv2Qt6/
-    
+
 TRANSLATIONS = \
     Translations/Batch_Renamer_en_GB.ts \
     Translations/Batch_Renamer_nl.ts \

@@ -85,16 +85,15 @@ QString FileOperation::renameFiles(QStringList sourceUrlsList, QStringList targe
     QSet<QString> uniqueSourceAndTargetUrlsSet=uniqueTargetUrlsSet;
     if (urlsUnique(&uniqueSourceAndTargetUrlsSet, sourceUrlsList)=="")
     {
-        // No potential clashes between file source names and file target names - we can perform a simple set of renames
-        if (urlsWriteable(targetUrlsList)!="")
-            return "Some target paths are not writeable.\nBulk rename not attempted.";
+        //No potential clashes between file source names and file target names - we can perform a simple set of renames
+        //if (urlsWriteable(targetUrlsList)!="")
+        //return "Some target paths are not writeable.\nBulk rename not attempted.";
 
         return renameFilesNoClashes(sourceUrlsList, targetUrlsList);
     }
 
     // We can't just do a simple file-by-file rename because some of the target file names clash with existing source file names..
     // Let's see if there's an order we can perform the operation in to avoid clashes..
-
 
     return "";
 }
@@ -111,9 +110,9 @@ QString FileOperation::renameFilesNoClashes(QStringList sourceUrlsList, QStringL
     for (int index=0; index<sourceUrlsList.length(); index++)
     {
         QFile sourcefile(sourceUrlsList[index]);
-        if (sourceUrlsList[index]==targetUrlsList[index]) continue; //No change to filename
-        success=sourcefile.rename(sourceUrlsList[index]);
-        if (success==false) return "error";
+        //if (sourceUrlsList[index]==targetUrlsList[index]) continue; //No change to filename
+        success=sourcefile.rename(targetUrlsList[index]);
+        if (success==false) return "Error attempting to rename file";
     }
 
     return "";
