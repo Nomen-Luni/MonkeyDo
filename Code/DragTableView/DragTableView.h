@@ -15,6 +15,9 @@ private:
     void mousePressEvent(QMouseEvent* event);
     void dropEvent(QDropEvent* event);
     int sourceRow;
+    // int selectedRowPrev;
+
+    QItemSelectionModel* selection;
 };
 
 #endif // DRAGTABLEVIEW_H
