@@ -3,7 +3,7 @@
 #include <QLocale>
 #include <QMessageBox>
 #include <QTranslator>
-#include "TransformEngine/TransformEngine.h"
+// #include "TransformEngine/TransformEngine.h"
 #include "Styling/SingleClickWorkaroundProxyStyle.h"
 
 int main(int argc, char *argv[])
@@ -20,13 +20,12 @@ int main(int argc, char *argv[])
         app.installTranslator(&translator);
     }
 
-    // Currently this is the way to set window icon on Wayland
-    QGuiApplication::setDesktopFileName("Bionic_Batch_Renamer");
-
     QStringList commandLineUrls=app.arguments();
     commandLineUrls.removeFirst();    //First argument is executable name, discard it
 
-    QString error=TransformEngine::addSourceUrls(commandLineUrls);
+    MainWindow mainWindow(nullptr, &app);
+
+    QString error=mainWindow.setInitialTransformItems(commandLineUrls);
     if (error!="")
     {
         QMessageBox msg;
@@ -34,7 +33,7 @@ int main(int argc, char *argv[])
         msg.exec();
         return 1;
     }
-    MainWindow mainWindow(nullptr, &app);
+
     mainWindow.show();
     return app.exec();
 }

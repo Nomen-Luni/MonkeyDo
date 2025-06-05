@@ -16,36 +16,83 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>310</y>
-     <width>341</width>
-     <height>32</height>
+     <x>310</x>
+     <y>320</y>
+     <width>80</width>
+     <height>27</height>
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
   <widget class="QLabel" name="aboutLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>10</y>
-     <width>331</width>
-     <height>271</height>
+     <x>120</x>
+     <y>0</y>
+     <width>154</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bionic Batch Renamer&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;SOFTWARE_VERSION&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Bionic Batch Renamer is a powerful tool to rename multiple files at once, utilising a Qt based GUI.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Interface and functionality heavily inspired by &lt;a href=&quot;https://docs.xfce.org/xfce/thunar/bulk-renamer/start&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Thunar's 'bulk renamer'&lt;/span&gt;&lt;/a&gt; plugin.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Bionic Batch Renamer &lt;a href=&quot;https://github.com/Nomen-Luni/Bionic-Batch-Renamer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;source on GitHub.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;MonkeyDo&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;SOFTWARE_VERSION&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="wordWrap">
     <bool>true</bool>
    </property>
    <property name="openExternalLinks">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="aboutLabel_2">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>260</y>
+     <width>383</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Batch rename tool with Qt6 GUI.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;MonkeyDo &lt;a href=&quot;https://github.com/Nomen-Luni/Bionic-Batch-Renamer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;source available on GitHub.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+   <property name="openExternalLinks">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>60</y>
+     <width>211</width>
+     <height>189</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>../../../../../../../Store/Downloads/monkeydo.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
  </widget>

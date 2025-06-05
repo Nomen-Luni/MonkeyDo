@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Batch Renamer - Rename multiple files</string>
+   <string>Batch Renamer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">

@@ -2,7 +2,10 @@
 #include "ui_MainWindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QListView>
+#include <QTreeView>
 #include "AboutDialog/AboutDialog.h"
+#include "FilesAndDirsDialog/FilesAndDirsDialog.h"
 
 //Transform providers
 #include "TransformProviders/TransformProvider_Case.h"
@@ -18,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent, QApplication* app)
 {
     ui->setupUi(this);
 
-    // This doesn't work on Wayland - see call to QGuiApplication::setDesktopFileName() in main.cpp.
     setWindowIcon(QIcon::fromTheme(QStringLiteral("edit-rename")));
 
     connect(ui->closePushButton, &QPushButton::clicked, app, &QCoreApplication::quit, Qt::QueuedConnection);
@@ -26,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent, QApplication* app)
     connect(ui->fileNamesTableView->horizontalHeader(),
                 &QHeaderView::sortIndicatorChanged, this, &MainWindow::tableSortOrderChanged);
 
-    //TODO: delete providers
+    //These transform providers are deleted in the MainWindow destructor
     addProvider(new TransformProvider_Case(this));
     addProvider(new TransformProvider_RemoveChars(this));
     addProvider(new TransformProvider_Numbering(this));
@@ -37,7 +39,14 @@ MainWindow::MainWindow(QWidget *parent, QApplication* app)
 
 MainWindow::~MainWindow()
 {
+    removeProviders();
+    TransformEngine::DeleteProviders();
     delete ui;
+}
+
+QString MainWindow::setInitialTransformItems(QStringList urls)
+{
+    return transformEngine.addTransformItems(urls);
 }
 
 void MainWindow::addProvider(TransformProvider* provider)
@@ -47,64 +56,65 @@ void MainWindow::addProvider(TransformProvider* provider)
     ui->operationComboBox->addItem(provider->displayName);
 }
 
+void MainWindow::removeProviders()
+{
+    int count = ui->TransformPagesStackedWidget->count();
+    for(int i = count-1; i >= 0; i--)
+    {
+        QWidget *widget = ui->TransformPagesStackedWidget->widget(i);
+        ui->TransformPagesStackedWidget->removeWidget(widget);
+    }
+}
+
 void MainWindow::on_operationComboBox_currentIndexChanged(int index)
 {
-    TransformEngine::selectProvider(index);
     ui->TransformPagesStackedWidget->setCurrentIndex(index);
-    doTransforms();
+    transformEngine.selectProvider(index);
 }
 
-void MainWindow::updateFileNamesTable()
-{
-    QStringList sourceFileNames=TransformEngine::getSourceFileNamesList();
-    QStringList targetFileNames=TransformEngine::getTargetFileNamesList();
-
-    // TODO: Already got filenames - rejig
-    transformEngine.setFileNames(sourceFileNames, targetFileNames);
-}
-
+// This slot is called by transformProviders when their controls change to initiate
+// recalculation of transforms and update of file table display
 void MainWindow::doTransforms()
 {
-    TransformEngine::doTransform();
-    updateFileNamesTable();
+    transformEngine.doTransforms(true);
 }
 
 void MainWindow::on_AddPushButton_clicked()
 {
-    // auto fileNames = QFileDialog::getOpenFileNames(this, QFileDialog::tr("Select files to add"),"~","All Files (*.*)");
-    QFileDialog fileDialog(this);
+    FilesAndDirsDialog fileDialog(this, tr("Add files"));
+    //fileDialog.setLabelText(QFileDialog::Accept, tr("Add"));
+    //fileDialog.setLabelText(QFileDialog::LookIn, tr("LookIn"));
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    fileDialog.setNameFilter(tr("Any file (*.*)"));
     fileDialog.setDirectory("/mnt/Data/Computing/Programming/Code/Temp - Test/");
-
-    //fileDialog.setOption(QFileDialog::DontUseNativeDialog, true); // Makes no difference
+    fileDialog.setNameFilter(tr("All files and folders (*)"));
+    fileDialog.setOption(QFileDialog::DontUseNativeDialog, true);
 
     if (!fileDialog.exec()) return;
 
-    auto fileNames=fileDialog.selectedFiles();
-    if (fileNames.size() == 0 ) return;
+    auto fileUrls=fileDialog.selectedFiles();
+    if (fileUrls.size() == 0 ) return;
 
-    TransformEngine::addSourceUrls(fileNames);
-    doTransforms();
+    transformEngine.addTransformItems(fileUrls);
 }
 
 void MainWindow::on_RemovePushButton_clicked()
 {
     auto indexList = ui->fileNamesTableView->selectionModel()->selectedRows();
-    int row;
+    QList<int> rowList;
+    int rowIndex;
     //As we're deleting, need to iterate backwards or indices will be wrong
     for (auto index = indexList.crbegin(); index != indexList.crend(); index++)
     {
-        row = (*index).row();
-        TransformEngine::removeSourceUrl(row);
+        rowIndex = (*index).row();
+        rowList.append(rowIndex);
     }
-    doTransforms();
+
+    transformEngine.removeTransformItems(rowList);
 }
 
 void MainWindow::on_clearPushButton_clicked()
 {
-    TransformEngine::clearSourceUrls();
-    updateFileNamesTable();
+    transformEngine.clearTransformItems();
 }
 
 void MainWindow::on_renamePushButton_clicked()
@@ -117,8 +127,7 @@ void MainWindow::on_renamePushButton_clicked()
         msg.exec();
         return;
     }
-
-    updateFileNamesTable();
+    // TODO - GUI update
 }
 
 void MainWindow::on_aboutButton_clicked()
@@ -129,9 +138,7 @@ void MainWindow::on_aboutButton_clicked()
 
 void MainWindow::on_targetComboBox_currentIndexChanged(int index)
 {
-    // (void)index;
-    TransformEngine::selectScope((transformScope)index);
-    doTransforms();
+    transformEngine.selectScope((transformScope)index);
 }
 
 void MainWindow::tableSortOrderChanged(int logicalIndex, Qt::SortOrder sortOrder)
@@ -141,11 +148,11 @@ void MainWindow::tableSortOrderChanged(int logicalIndex, Qt::SortOrder sortOrder
         // auto val=ui->fileNamesTableView->horizontalHeader()->sortIndicatorOrder();
         if (sortOrder==Qt::SortOrder::AscendingOrder)
         {
-            TransformEngine::sortSourceUrls(false);
+            TransformEngine::sortItemsBySourceFileName(false);
         }
         else
         {
-            TransformEngine::sortSourceUrls(true);
+            TransformEngine::sortItemsBySourceFileName(true);
         }
         //Quick but slightly dirty way of reordering target filename list and updating table...
         doTransforms();

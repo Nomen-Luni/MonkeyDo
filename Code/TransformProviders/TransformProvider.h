@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "enum_transformScope.h"
+#include "TransformEngine/TransformItem.h"
 
 namespace Ui {
 class TransformProvider;
@@ -15,7 +16,7 @@ class TransformProvider : public QWidget
 public:
     explicit TransformProvider(QWidget* parent = nullptr):QWidget(parent){}
     QString displayName;
-    bool transformMulti(const QStringList& inFullUrls, const QStringList& in, QStringList& out, transformScope txScope);
+    bool transformMulti(QList<TransformItem>& transformItems, transformScope txScope);
     bool transformIsOrderDependent=false;
 private:
     virtual QString transform(const QString& inFullUrl, const QString& in, int index, bool& success) = 0;

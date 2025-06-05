@@ -18,10 +18,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr, QApplication* app = nullptr);
     ~MainWindow();
+    QString setInitialTransformItems(QStringList urls);
 
 private:
     void addProvider(TransformProvider* provider);
-    void updateFileNamesTable();
+    void removeProviders();
     TransformEngine transformEngine;
     Ui::MainWindow *ui;
 

@@ -11,9 +11,11 @@ CONFIG += c++11
 LIBS += -lKExiv2Qt6
 
 SOURCES += \
+    FilesAndDirsDialog/FilesAndDirsDialog.cpp \
     main.cpp \
     MainWindow/MainWindow.cpp \
     TransformEngine/TransformEngine.cpp \
+    TransformEngine/TransformItem.cpp \
     TransformProviders/TransformProvider.cpp \
     TransformProviders/TransformProvider_Case.cpp \
     TransformProviders/TransformProvider_DateTime.cpp \
@@ -28,9 +30,11 @@ SOURCES += \
     DragTableView/DragTableView.cpp
     
 HEADERS += \
+    FilesAndDirsDialog/FilesAndDirsDialog.h \
     version.h\
     MainWindow/MainWindow.h \
     TransformEngine/TransformEngine.h \
+    TransformEngine/TransformItem.h \
     TransformProviders/enum_transformScope.h \
     TransformProviders/TransformProvider.h \
     TransformProviders/TransformProvider_Case.h \

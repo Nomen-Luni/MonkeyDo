@@ -6,107 +6,140 @@
 #include <algorithm>
 
 //Definition of variables declared private static in header
-int TransformEngine::numProviders=0;
 int TransformEngine::selectedProviderIndex=0;
+QIcon TransformEngine::folderIcon = QIcon::fromTheme("folder");
+//QIcon TransformEngine::fileIcon = QIcon::fromTheme("file");
 transformScope TransformEngine::scope=transformScope::name_only;
-TransformProvider* TransformEngine::transformProviders[maxTransformProviders];
-QStringList TransformEngine::sourceFileNamesList;
-QStringList TransformEngine::targetFileNamesList;
-QStringList TransformEngine::sourceUrlsList;
-//
+QList<TransformProvider*> TransformEngine::transformProviders;
+QList<TransformItem> TransformEngine::transformItemList;
 
 TransformEngine::TransformEngine(QObject *parent): QAbstractTableModel(parent)
 {
+
 }
 
-QStringList TransformEngine::getSourceFileNamesList()
+void TransformEngine::DeleteProviders()
 {
-    return sourceFileNamesList;
+    for (int index = transformProviders.size()-1; index >= 0; index--)
+    {
+        delete transformProviders[index];
+    }
+    transformProviders.clear();
 }
 
-QStringList TransformEngine::getTargetFileNamesList()
-{
-    return targetFileNamesList;
-}
-
-QString TransformEngine::addSourceUrls(QStringList urls)
+QString TransformEngine::addTransformItems(QStringList sourceUrls)
 {
     QFileInfo fileInfo;
-    QString errorStr=FileOperation::urlsUnique(urls);
+    QString errorStr=FileOperation::urlsUnique(sourceUrls);
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nSelected URLs contained duplicates.");
 
-    errorStr=FileOperation::urlsWriteable(urls);
+    errorStr=FileOperation::urlsWriteable(sourceUrls);
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nEnsure user has write access to all selected files and directories.");
 
-    QList<QString> combinedUrlsList(sourceUrlsList);
-    combinedUrlsList.append(urls);
+
+    QList<QString> combinedUrlsList=getSourceUrls();
+    combinedUrlsList.append(sourceUrls);
 
     errorStr=FileOperation::urlsUnique(combinedUrlsList);
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nCannot re-add urls that have previously been added.");
 
-    sourceUrlsList.append(urls);
-    foreach (QString url, urls)
+    beginResetModel();  // =====
+
+    foreach (QString url, sourceUrls)
     {
-        fileInfo.setFile(url);
-        sourceFileNamesList.push_back(fileInfo.fileName());
+        TransformItem item=TransformItem(url);
+        transformItemList.append(item);
     }
+
+    doTransforms(false);
+
+    endResetModel();  // =====
     return "";
 }
 
-bool TransformEngine::removeSourceUrl(int index)
+bool TransformEngine::removeTransformItems(QList<int> rowIndices)
 {
-    sourceUrlsList.removeAt(index);
-    sourceFileNamesList.removeAt(index);
+    beginResetModel();  // =====
+
+    foreach (int index, rowIndices)
+    {
+        transformItemList.removeAt(index);
+    }
+
+    if (transformIsOrderDependent())
+        doTransforms(false);
+
+    endResetModel();  // =====
     return true;
 }
 
-void TransformEngine::clearSourceUrls()
+void TransformEngine::clearTransformItems()
 {
-    sourceUrlsList.clear();
-    sourceFileNamesList.clear();
-    targetFileNamesList.clear();
+    beginResetModel();  // =====
+
+    transformItemList.clear();
+
+    endResetModel();  // =====
 }
 
 int TransformEngine::addProvider(TransformProvider* provider)
 {
-    if (numProviders<maxTransformProviders)
-    {
-        transformProviders[numProviders]=provider;
-        numProviders++;
-    }
+    transformProviders.append(provider);
     return 0;
 }
 
 int TransformEngine::selectProvider(int index)
 {
     selectedProviderIndex=index;
+    doTransforms(true);
     return 0;
 }
 
 int TransformEngine::selectScope(transformScope scope)
 {
     TransformEngine::scope=scope;
+    doTransforms(true);
     return 0;
 }
 
-void TransformEngine::doTransform()
+void TransformEngine::doTransforms(bool resetModel)
 {
-    targetFileNamesList.clear();
+    // resetModel should be set true if this method is called alone to marshall table view GUI updates
+    // If this method is part of a larger table data update which implements its own reset, resetModel should be set false
+
+    if (resetModel)
+        beginResetModel();  // =====
+
     auto provider=transformProviders[selectedProviderIndex];
-    provider->transformMulti(sourceUrlsList, sourceFileNamesList, targetFileNamesList, scope);
+    provider->transformMulti(transformItemList, scope);
+
+    if (resetModel)
+        endResetModel();    // =====
+}
+
+QStringList TransformEngine::getSourceUrls()
+{
+    QStringList sourceUrls;
+
+    foreach (TransformItem item, transformItemList)
+    {
+        sourceUrls.append(item.sourceUrl);
+    }
+    return sourceUrls;
 }
 
 QStringList TransformEngine::createTargetUrls()
 {
     QStringList targetUrls;
     QFileInfo fileInfo;
-    for (int index=0; index<sourceUrlsList.length(); index++)
+
+    foreach (TransformItem item, transformItemList)
     {
-        fileInfo.setFile(sourceUrlsList[index]);
-        QString targetUrl=fileInfo.absolutePath()+"/"+targetFileNamesList[index];
+        fileInfo.setFile(item.sourceUrl);
+        QString targetUrl=fileInfo.absolutePath()+"/"+item.targetFileName;
         targetUrls.append(targetUrl);
     }
     return targetUrls;
@@ -115,43 +148,36 @@ QStringList TransformEngine::createTargetUrls()
 QString TransformEngine::renameFiles()
 {
     // bool success;
+    QStringList sourceUrlsList=TransformEngine::getSourceUrls();
     QStringList targetUrlsList=TransformEngine::createTargetUrls();
 
     QString errorString=FileOperation::renameFiles(sourceUrlsList, targetUrlsList);
     if (errorString!="") return errorString;
 
     //Update our stored source file names to match the renamed file names
-    sourceUrlsList.clear();
-    sourceFileNamesList.clear();
+    transformItemList.clear();
+
+    int ind=0;
     foreach (QString targetUrl,targetUrlsList)
     {
-        sourceUrlsList.append(targetUrl);
-    }
-    foreach (QString targetFileName,targetFileNamesList)
-    {
-        sourceFileNamesList.append(targetFileName);
+        transformItemList[ind].SetSourceUrl(targetUrl, false);
+        ind++;
     }
 
     return "";
 }
 
-bool TransformEngine::sortSourceUrls(bool reverseAlphabetical)
+bool TransformEngine::sortItemsBySourceFileName(bool reverseAlphabetical)
 {
-    QFileInfo fileInfo;
-
-    sourceUrlsList.sort(Qt::CaseInsensitive);  //Sorts alphabetically
     if (reverseAlphabetical)
     {
-        std::reverse(sourceUrlsList.begin(), sourceUrlsList.end());
+        std::sort(transformItemList.begin(), transformItemList.end(), TransformItem::compareBySourceFileNameDescending);
+    }
+    else
+    {
+        std::sort(transformItemList.begin(), transformItemList.end(), TransformItem::compareBySourceFileNameAscending);
     }
 
-    //Now update the source and target filenames
-    sourceFileNamesList.clear();
-    foreach (QString url, sourceUrlsList)
-    {
-        fileInfo.setFile(url);
-        sourceFileNamesList.push_back(fileInfo.fileName());
-    }
     return true;
 }
 
@@ -167,7 +193,7 @@ bool TransformEngine::transformIsOrderDependent()
 
 int TransformEngine::rowCount(const QModelIndex & /*parent*/) const
 {
-    return sourceFileNamesList.length();
+    return transformItemList.length();
 }
 
 int TransformEngine::columnCount(const QModelIndex & /*parent*/) const
@@ -180,14 +206,13 @@ QVariant TransformEngine::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         if (index.column() == 0)
-            return sourceFileNamesList[index.row()];
+            return transformItemList[index.row()].sourceFileName;
         else
-            return targetFileNamesList[index.row()];
+            return transformItemList[index.row()].targetFileName;
     }
-    else if ((role == Qt::DecorationRole) && (index.column() == 0))
-    {
-        return QIcon::fromTheme("folder");
-    }
+
+    if ((role == Qt::DecorationRole) && (index.column() == 0) && (transformItemList[index.row()].isDir))
+        return folderIcon;
 
     return QVariant();
 }
@@ -216,7 +241,7 @@ Qt::ItemFlags TransformEngine::flags(const QModelIndex &index) const
     }
 }
 
-void TransformEngine::setFileNames(QStringList sourceFileNames, QStringList targetFileNames)
+void TransformEngine::setFileNames()
 {
     beginResetModel();
     //this->sourceFileNamesList = sourceFileNames;
@@ -231,35 +256,21 @@ Qt::DropActions TransformEngine::supportedDropActions() const
 
 bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int count, const QModelIndex& parent2, int dest)
 {
+    (void) parent1;
+    (void) parent2;
 
     qDebug("source_first (%i) count (%i) dest (%i)", source_first, count, dest);
     if (source_first==dest) return false;
 
     //beginMoveRows(parent1, source_first, source_last, parent2, dest);
 
-    beginResetModel();
+    beginResetModel();  // =====
 
-    /*
-    this->sourceFileNames.clear();
-    this->sourceFileNames.append({"00","01","02","03","04","05"});
-    qDebug("moveRows: %i -> %i", source_first, dest);
-    qDebug("%s:%s:%s:%s:%s:%s->",
-           qPrintable(this->sourceFileNames[0]),
-           qPrintable(this->sourceFileNames[1]),
-           qPrintable(this->sourceFileNames[2]),
-           qPrintable(this->sourceFileNames[3]),
-           qPrintable(this->sourceFileNames[4]),
-           qPrintable(this->sourceFileNames[5])
-           );
-    */
-
-    // Re-order source file names list
-
-    QStringList removed;
+    QList<TransformItem> removed;
     for (int c=0; c<count; c++)
     {
-        auto sourceVal=this->sourceFileNamesList[source_first]; // we don't add c since every individual remove shuffles things down
-        this->sourceFileNamesList.removeAt(source_first);
+        auto sourceVal=this->transformItemList[source_first]; // we don't add c since every individual remove shuffles things down
+        this->transformItemList.removeAt(source_first);
         removed.append(sourceVal);
     }
 
@@ -269,41 +280,16 @@ bool TransformEngine::moveRows(const QModelIndex& parent1, int source_first, int
     }
     for (int c=0; c<count; c++)
     {
-        this->sourceFileNamesList.insert(dest+c,removed[c]);
+        this->transformItemList.insert(dest+c,removed[c]);
     }
 
     if (TransformEngine::transformIsOrderDependent())
     {
-        TransformEngine::doTransform();
-        //this->targetFileNames=TransformEngine::getTargetFileNamesList();
-    }
-    else
-    {
-        // Re-order target file names list
-        // sourceVal=this->targetFileNamesList[source_first];
-        // this->targetFileNamesList.removeAt(source_first);
-        // this->targetFileNamesList.insert(dest,sourceVal);
+        TransformEngine::doTransforms(false);
     }
 
-    /*
-    qDebug("%s:%s:%s:%s:%s:%s",
-           qPrintable(this->sourceFileNames[0]),
-           qPrintable(this->sourceFileNames[1]),
-           qPrintable(this->sourceFileNames[2]),
-           qPrintable(this->sourceFileNames[3]),
-           qPrintable(this->sourceFileNames[4]),
-           qPrintable(this->sourceFileNames[5])
-           );
-    */
-
-    endResetModel();
+    endResetModel();    // =====
 
     return true;
 }
 
-/*
-QModelIndex index(int row, int column, const QModelIndex &parent)
-{
-    return new QModelIndex(row, column);
-}
-*/

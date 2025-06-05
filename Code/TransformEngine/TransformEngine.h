@@ -5,6 +5,7 @@
 #include <QDropEvent>
 #include <QModelIndex>
 #include <QStringList>
+#include "TransformItem.h"
 #include "TransformProviders/enum_transformScope.h"
 #include "TransformProviders/TransformProvider.h"
 
@@ -13,20 +14,23 @@ class TransformEngine: public QAbstractTableModel
     Q_OBJECT
 public:
     explicit TransformEngine(QObject* parent = nullptr);
-
-    static QStringList getSourceFileNamesList();
-    static QStringList getTargetFileNamesList();
-    static QString addSourceUrls(QStringList urls);
-    static bool removeSourceUrl(int index);
-    static void clearSourceUrls();
     static int addProvider(TransformProvider* provider);
-    static int selectProvider(int index);
-    static int selectScope(transformScope txScope);
-    static void doTransform();
+
     static QString renameFiles();
+    static QStringList getSourceUrls();
     static QStringList createTargetUrls();
-    static bool sortSourceUrls(bool reverseAlphabetical);
+    static bool sortItemsBySourceFileName(bool reverseAlphabetical);
     static bool transformIsOrderDependent();
+
+    static void DeleteProviders();
+
+    // Instance methods
+    int selectProvider(int index);
+    int selectScope(transformScope txScope);
+    void doTransforms(bool resetModel);
+    QString addTransformItems(QStringList sourceUrls);
+    bool removeTransformItems(QList<int> rowIndices);
+    void clearTransformItems();
 
     // ViewModel Functions
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -34,20 +38,17 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
-    void setFileNames(QStringList sourceFileNames, QStringList targetFileNames);
+    void setFileNames();
     Qt::DropActions supportedDropActions() const override;
     bool moveRows(const QModelIndex& parent1, int source_first, int count, const QModelIndex& parent2, int dest) override;
 
 private:
     // TransformEngine() {}    //Static/singleton- not instanced
-    static const int maxTransformProviders = 50;
-    static int numProviders;
     static int selectedProviderIndex;
+    static QIcon folderIcon;
     static transformScope scope;
-    static TransformProvider* transformProviders[maxTransformProviders];
-    static QStringList sourceFileNamesList;
-    static QStringList targetFileNamesList;
-    static QStringList sourceUrlsList;
+    static QList<TransformProvider*> transformProviders;
+    static QList<TransformItem> transformItemList;
 };
 
 #endif // TRANSFORMENGINE_H

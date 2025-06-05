@@ -1,11 +1,10 @@
 #include "TransformProvider.h"
 
-bool TransformProvider::transformMulti(const QStringList& inFullUrls, const QStringList& in, QStringList& out, transformScope scope)
+bool TransformProvider::transformMulti(QList<TransformItem>& transformItems, transformScope scope)
 {
     bool successOne=true;
     bool successAll=true;
     QString transformed;
-    out.clear();
 
     int index=0;
 
@@ -13,31 +12,33 @@ bool TransformProvider::transformMulti(const QStringList& inFullUrls, const QStr
     QString fileNameOnly;
     QString extensionOnly;
     bool splitFound;
-    foreach (QString str, in)
+
+    for (int index=0; index<transformItems.length(); index++)
+    //foreach (TransformItem item, transformItems)
     {
         switch (scope)
         {    
             case name_and_extension:
-                transformed=transform(inFullUrls[index],str, index, successOne);
+                transformed=transform(transformItems[index].sourceUrl, transformItems[index].sourceFileName, index, successOne);
             break;
             case name_only:
-                splitFound=splitFileName(str,fileNameOnly,extensionOnly);
-                transformed=transform(inFullUrls[index],fileNameOnly, index, successOne);
+                splitFound=splitFileName(transformItems[index].sourceFileName,fileNameOnly,extensionOnly);
+                transformed=transform(transformItems[index].sourceUrl,fileNameOnly, index, successOne);
                 if (splitFound)
                 {
                     transformed=transformed+"."+extensionOnly;
                 }
             break;
             case extension_only:
-                splitFound=splitFileName(str,fileNameOnly,extensionOnly);
+                splitFound=splitFileName(transformItems[index].sourceFileName,fileNameOnly,extensionOnly);
                 if (splitFound)
                 {
-                    transformed=transform(inFullUrls[index],extensionOnly, index, successOne);
+                    transformed=transform(transformItems[index].sourceUrl,extensionOnly, index, successOne);
                     transformed=fileNameOnly+"."+transformed;
                 }
                 else
                 {
-                    transformed=str;
+                    transformed=transformItems[index].sourceFileName;
                 }
             break;
         }
@@ -47,8 +48,7 @@ bool TransformProvider::transformMulti(const QStringList& inFullUrls, const QStr
             transformed="";
             successAll=false;
         }
-        out.push_back(transformed);
-        index++;
+        transformItems[index].targetFileName=transformed;
     }
     return successAll;
 }
