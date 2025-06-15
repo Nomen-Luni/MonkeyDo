@@ -1,13 +1,14 @@
-#include "TransformProvider_InsertOverwrite.h"
-#include "ui_TransformProvider_InsertOverwrite.h"
+#include "TransformOperator_InsertOverwrite.h"
+#include "ui_TransformOperator_InsertOverwrite.h"
 #include "MainWindow/MainWindow.h" //For signal connection
 
-TransformProvider_InsertOverwrite::TransformProvider_InsertOverwrite(QWidget *parent)
-    : TransformProvider(parent) //QWidget constructor called via TransformProvider constructor
-    , ui(new Ui::TransformProvider_InsertOverwrite)
+TransformOperator_InsertOverwrite::TransformOperator_InsertOverwrite(QWidget *parent)
+    : TransformOperator(parent) //QWidget constructor called via TransformOperator constructor
+    , ui(new Ui::TransformOperator_InsertOverwrite)
 {
     ui->setupUi(this);
     displayName=QObject::tr("Insert / Overwrite");
+    ID="INSERTOVERWRITE";
 
     //Connect change events of all contained control to Main Window's 'transformChanged' slot to trigger an update
     connect(ui->fromComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),(MainWindow*)parent, &MainWindow::doTransforms);
@@ -16,12 +17,12 @@ TransformProvider_InsertOverwrite::TransformProvider_InsertOverwrite(QWidget *pa
     connect(ui->textLineEdit,&QLineEdit::textEdited,(MainWindow*)parent, &MainWindow::doTransforms);
 }
 
-TransformProvider_InsertOverwrite::~TransformProvider_InsertOverwrite()
+TransformOperator_InsertOverwrite::~TransformOperator_InsertOverwrite()
 {
     delete ui;
 }
 
-void TransformProvider_InsertOverwrite::updateGUIvars()
+void TransformOperator_InsertOverwrite::updateGUIvars()
 {
     from=(fromLocations)ui->fromComboBox->currentIndex();
     mode=(modes)ui->modeComboBox->currentIndex();
@@ -29,7 +30,7 @@ void TransformProvider_InsertOverwrite::updateGUIvars()
     text=ui->textLineEdit->text();
 }
 
-QString TransformProvider_InsertOverwrite::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
+QString TransformOperator_InsertOverwrite::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
 {
     QString transformed=in;
     int atIndex;

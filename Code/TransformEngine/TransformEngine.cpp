@@ -1,35 +1,52 @@
 #include "TransformEngine.h"
-// #include "./FileSystemOverlay/FileSystemOverlay.h"
 #include "./FileOperation/FileOperation.h"
 #include <QFileInfo>
 #include <QFile>
 #include <algorithm>
 
 //Definition of variables declared private static in header
-int TransformEngine::selectedProviderIndex=0;
+int TransformEngine::selectedEnabledProviderIndex=0;
 QIcon TransformEngine::folderIcon = QIcon::fromTheme("folder");
-//QIcon TransformEngine::fileIcon = QIcon::fromTheme("file");
 transformScope TransformEngine::scope=transformScope::name_only;
-QList<TransformProvider*> TransformEngine::transformProviders;
+QList<TransformOperator*> TransformEngine::transformOperators;
 QList<TransformItem> TransformEngine::transformItemList;
 
 TransformEngine::TransformEngine(QObject *parent): QAbstractTableModel(parent)
 {
-
 }
 
-void TransformEngine::DeleteProviders()
+int TransformEngine::addProvider(TransformOperator* provider)
 {
-    for (int index = transformProviders.size()-1; index >= 0; index--)
+    transformOperators.append(provider);
+    return 0;
+}
+
+int TransformEngine::selectProvider(int index)
+{
+    selectedEnabledProviderIndex=index;
+    doTransforms(true);
+    return 0;
+}
+
+int TransformEngine::selectScope(transformScope scope)
+{
+    TransformEngine::scope=scope;
+    doTransforms(true);
+    return 0;
+}
+
+void TransformEngine::DeleteAllProviders()
+{
+    for (int index = transformOperators.size()-1; index >= 0; index--)
     {
-        delete transformProviders[index];
+        delete transformOperators[index];
     }
-    transformProviders.clear();
+    transformOperators.clear();
 }
 
-QString TransformEngine::addTransformItems(QStringList sourceUrls)
+// Call with 'insertAtIndex=-1' to append items to the end of the list
+QString TransformEngine::addTransformItems(QStringList sourceUrls, int insertAtIndex)
 {
-    QFileInfo fileInfo;
     QString errorStr=FileOperation::urlsUnique(sourceUrls);
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nSelected URLs contained duplicates.");
@@ -38,7 +55,6 @@ QString TransformEngine::addTransformItems(QStringList sourceUrls)
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nEnsure user has write access to all selected files and directories.");
 
-
     QList<QString> combinedUrlsList=getSourceUrls();
     combinedUrlsList.append(sourceUrls);
 
@@ -46,12 +62,18 @@ QString TransformEngine::addTransformItems(QStringList sourceUrls)
     if (errorStr!="")
         return QObject::tr("Selected URLs not added:\nCannot re-add urls that have previously been added.");
 
+    if (insertAtIndex>transformItemList.size())
+        return QObject::tr("Attempt to insert transformItem beyond end of list.");
+
+    if (insertAtIndex<0) insertAtIndex=transformItemList.size(); // This will 'insert' at end - i.e. append
+
     beginResetModel();  // =====
 
     foreach (QString url, sourceUrls)
     {
         TransformItem item=TransformItem(url);
-        transformItemList.append(item);
+        transformItemList.insert(insertAtIndex, item);
+        insertAtIndex++;
     }
 
     doTransforms(false);
@@ -85,26 +107,6 @@ void TransformEngine::clearTransformItems()
     endResetModel();  // =====
 }
 
-int TransformEngine::addProvider(TransformProvider* provider)
-{
-    transformProviders.append(provider);
-    return 0;
-}
-
-int TransformEngine::selectProvider(int index)
-{
-    selectedProviderIndex=index;
-    doTransforms(true);
-    return 0;
-}
-
-int TransformEngine::selectScope(transformScope scope)
-{
-    TransformEngine::scope=scope;
-    doTransforms(true);
-    return 0;
-}
-
 void TransformEngine::doTransforms(bool resetModel)
 {
     // resetModel should be set true if this method is called alone to marshall table view GUI updates
@@ -113,7 +115,7 @@ void TransformEngine::doTransforms(bool resetModel)
     if (resetModel)
         beginResetModel();  // =====
 
-    auto provider=transformProviders[selectedProviderIndex];
+    auto provider=transformOperators[selectedEnabledProviderIndex];
     provider->transformMulti(transformItemList, scope);
 
     if (resetModel)
@@ -154,21 +156,25 @@ QString TransformEngine::renameFiles()
     QString errorString=FileOperation::renameFiles(sourceUrlsList, targetUrlsList);
     if (errorString!="") return errorString;
 
-    //Update our stored source file names to match the renamed file names
-    transformItemList.clear();
+    beginResetModel();  // =====
 
-    int ind=0;
-    foreach (QString targetUrl,targetUrlsList)
+    //Update our stored source file names to match the renamed file names
+    for (int index=0; index<transformItemList.size(); index++)
     {
-        transformItemList[ind].SetSourceUrl(targetUrl, false);
-        ind++;
+        transformItemList[index].SetSourceUrl(targetUrlsList[index], false);
     }
+
+    doTransforms(false);
+
+    endResetModel();    // =====
 
     return "";
 }
 
 bool TransformEngine::sortItemsBySourceFileName(bool reverseAlphabetical)
 {
+    beginResetModel();  // =====
+
     if (reverseAlphabetical)
     {
         std::sort(transformItemList.begin(), transformItemList.end(), TransformItem::compareBySourceFileNameDescending);
@@ -178,12 +184,17 @@ bool TransformEngine::sortItemsBySourceFileName(bool reverseAlphabetical)
         std::sort(transformItemList.begin(), transformItemList.end(), TransformItem::compareBySourceFileNameAscending);
     }
 
+    if (transformIsOrderDependent())
+        doTransforms(false);
+
+    endResetModel();    // =====
+
     return true;
 }
 
 bool TransformEngine::transformIsOrderDependent()
 {
-    auto provider=transformProviders[selectedProviderIndex];
+    auto provider=transformOperators[selectedEnabledProviderIndex];
     return provider->transformIsOrderDependent;
 }
 
@@ -234,19 +245,10 @@ Qt::ItemFlags TransformEngine::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flag = QAbstractItemModel::flags(index);
 
-    if (index.isValid()) {
+    if (index.isValid())
         return (flag | Qt::ItemIsDragEnabled) & (~Qt::ItemIsDropEnabled);
-    } else {
-        return flag | Qt::ItemIsDropEnabled;
-    }
-}
 
-void TransformEngine::setFileNames()
-{
-    beginResetModel();
-    //this->sourceFileNamesList = sourceFileNames;
-    //this->targetFileNamesList = targetFileNames;
-    endResetModel();
+    return flag | Qt::ItemIsDropEnabled;
 }
 
 Qt::DropActions TransformEngine::supportedDropActions() const

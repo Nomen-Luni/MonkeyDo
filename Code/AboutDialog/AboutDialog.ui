@@ -11,90 +11,36 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About</string>
+   <string>About Batch Renamer</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>320</y>
-     <width>80</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="aboutLabel">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>0</y>
-     <width>154</width>
-     <height>50</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;MonkeyDo&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;SOFTWARE_VERSION&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-   <property name="openExternalLinks">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="aboutLabel_2">
-   <property name="geometry">
-    <rect>
-     <x>9</x>
-     <y>260</y>
-     <width>383</width>
-     <height>50</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Batch rename tool with Qt6 GUI.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;MonkeyDo &lt;a href=&quot;https://github.com/Nomen-Luni/Bionic-Batch-Renamer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;source available on GitHub.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-   <property name="openExternalLinks">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>60</y>
-     <width>211</width>
-     <height>189</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>../../../../../../../Store/Downloads/monkeydo.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
-   </property>
-  </widget>
+  <property name="windowIcon">
+   <iconset theme="QIcon::ThemeIcon::HelpAbout"/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="aboutLabel">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:22pt;&quot;&gt;🐒 &lt;/span&gt;&lt;span style=&quot; font-size:22pt; color:#ffffff;&quot;&gt;MonkeyDo&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;vSOFTWARE_VERSION&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Cheeky batch renaming tool with Qt6 GUI&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/Nomen-Luni/Bionic-Batch-Renamer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Source available on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>

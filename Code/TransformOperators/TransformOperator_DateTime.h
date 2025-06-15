@@ -1,19 +1,19 @@
-#ifndef TRANSFORMPROVIDER_DATETIME_H
-#define TRANSFORMPROVIDER_DATETIME_H
+#ifndef TRANSFORMOPERATION_DATETIME_H
+#define TRANSFORMOPERATION_DATETIME_H
 
-#include "TransformProvider.h"
+#include "TransformOperator.h"
 #include <QWidget>
 #include <QStackedWidget>
 
 namespace Ui {
-class TransformProvider_DateTime;
+class TransformOperator_DateTime;
 }
 
-class TransformProvider_DateTime : public TransformProvider
+class TransformOperator_DateTime : public TransformOperator
 {
 public:
-    explicit TransformProvider_DateTime(QWidget *parent = nullptr);
-    ~TransformProvider_DateTime();
+    explicit TransformOperator_DateTime(QWidget *parent = nullptr);
+    ~TransformOperator_DateTime();
     void updateGUIvars();
     QString transform(const QString& inFullUrl, const QString& in, int index, bool& success);
 
@@ -33,7 +33,7 @@ private:
         from_back
     };
 
-    Ui::TransformProvider_DateTime *ui;
+    Ui::TransformOperator_DateTime *ui;
 
     int atPosition;
     dateSelections dateSelect;
@@ -41,4 +41,4 @@ private:
     fromLocations from;
 };
 
-#endif // TRANSFORMPROVIDER_DATETIME_H
+#endif // TRANSFORMOPERATION_DATETIME_H

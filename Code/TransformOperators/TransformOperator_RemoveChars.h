@@ -1,19 +1,19 @@
-#ifndef TRANSFORMPROVIDER_REMOVECHARS_H
-#define TRANSFORMPROVIDER_REMOVECHARS_H
+#ifndef TRANSFORMOPERATION_REMOVECHARS_H
+#define TRANSFORMOPERATION_REMOVECHARS_H
 
-#include "TransformProvider.h"
+#include "TransformOperator.h"
 #include <QWidget>
 #include <QStackedWidget>
 
 namespace Ui {
-class TransformProvider_RemoveChars;
+class TransformOperator_RemoveChars;
 }
 
-class TransformProvider_RemoveChars : public TransformProvider
+class TransformOperator_RemoveChars : public TransformOperator
 {
 public:
-    explicit TransformProvider_RemoveChars(QWidget *parent = nullptr);
-    ~TransformProvider_RemoveChars();
+    explicit TransformOperator_RemoveChars(QWidget *parent = nullptr);
+    ~TransformOperator_RemoveChars();
     void updateGUIvars();
     QString transform(const QString& inFullUrl, const QString& in, int index, bool& success);
 
@@ -24,7 +24,7 @@ private:
         fromto_back
     };
 
-    Ui::TransformProvider_RemoveChars *ui;
+    Ui::TransformOperator_RemoveChars *ui;
 
     int fromChars;
     int toChars;
@@ -34,4 +34,4 @@ private:
     //QPalette paletteSpinboxDefault;
 };
 
-#endif // TRANSFORMPROVIDER_REMOVECHARS_H
+#endif // TRANSFORMOPERATION_REMOVECHARS_H

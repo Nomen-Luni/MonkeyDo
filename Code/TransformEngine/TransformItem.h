@@ -21,7 +21,7 @@ public:
     //static QStringList getSourceFileNamesList();
 private:
     // TransformEngine() {}    //Static/singleton- not instanced
-    //static const int maxTransformProviders = 50;
+    //static const int maxTransformOperators = 50;
 };
 
 #endif // TRANSFORMITEM_H

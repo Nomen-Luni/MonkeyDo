@@ -1,12 +1,10 @@
-#include "TransformProvider.h"
+#include "TransformOperator.h"
 
-bool TransformProvider::transformMulti(QList<TransformItem>& transformItems, transformScope scope)
+bool TransformOperator::transformMulti(QList<TransformItem>& transformItems, transformScope scope)
 {
     bool successOne=true;
     bool successAll=true;
     QString transformed;
-
-    int index=0;
 
     updateGUIvars();
     QString fileNameOnly;
@@ -14,7 +12,6 @@ bool TransformProvider::transformMulti(QList<TransformItem>& transformItems, tra
     bool splitFound;
 
     for (int index=0; index<transformItems.length(); index++)
-    //foreach (TransformItem item, transformItems)
     {
         switch (scope)
         {    
@@ -53,7 +50,7 @@ bool TransformProvider::transformMulti(QList<TransformItem>& transformItems, tra
     return successAll;
 }
 
-bool TransformProvider::splitFileName(const QString& fullFileName, QString& filename, QString& extension, bool greedyExtension)
+bool TransformOperator::splitFileName(const QString& fullFileName, QString& filename, QString& extension, bool greedyExtension)
 {
     int offset;
     if (greedyExtension)

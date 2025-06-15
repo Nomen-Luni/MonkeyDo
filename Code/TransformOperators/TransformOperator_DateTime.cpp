@@ -1,16 +1,17 @@
-#include "TransformProvider_DateTime.h"
-#include "ui_TransformProvider_DateTime.h"
+#include "TransformOperator_DateTime.h"
+#include "ui_TransformOperator_DateTime.h"
 #include "MainWindow/MainWindow.h" //For signal connection
 #include <QDateTime>
 #include <QFileInfo>
 #include "KExiv2Qt6/kexiv2/kexiv2.h"
 
-TransformProvider_DateTime::TransformProvider_DateTime(QWidget *parent)
-    : TransformProvider(parent) //QWidget constructor called via TransformProvider constructor
-    , ui(new Ui::TransformProvider_DateTime)
+TransformOperator_DateTime::TransformOperator_DateTime(QWidget *parent)
+    : TransformOperator(parent) //QWidget constructor called via TransformOperator constructor
+    , ui(new Ui::TransformOperator_DateTime)
 {
     ui->setupUi(this);
     displayName=QObject::tr("Date Time");
+    ID="DATETIME";
 
     //Connect change events of all contained control to Main Window's 'transformChanged' slot to trigger an update
     connect(ui->atPositionSpinBox,QOverload<int>::of(&QSpinBox::valueChanged),(MainWindow*)parent, &MainWindow::doTransforms);
@@ -21,13 +22,13 @@ TransformProvider_DateTime::TransformProvider_DateTime(QWidget *parent)
     if (KExiv2Iface::KExiv2::initializeExiv2()==false) displayName="Problem";
 }
 
-TransformProvider_DateTime::~TransformProvider_DateTime()
+TransformOperator_DateTime::~TransformOperator_DateTime()
 {
     KExiv2Iface::KExiv2::cleanupExiv2();
     delete ui;
 }
 
-void TransformProvider_DateTime::updateGUIvars()
+void TransformOperator_DateTime::updateGUIvars()
 {
     atPosition=ui->atPositionSpinBox->value();
     dateSelect=(dateSelections)ui->dateSelectComboBox->currentIndex();
@@ -35,7 +36,7 @@ void TransformProvider_DateTime::updateGUIvars()
     from=(fromLocations)ui->fromComboBox->currentIndex();
 }
 
-QString TransformProvider_DateTime::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
+QString TransformOperator_DateTime::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
 {
     QString transformed;
     (void)index;

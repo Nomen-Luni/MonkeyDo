@@ -6,31 +6,31 @@
 #include <QModelIndex>
 #include <QStringList>
 #include "TransformItem.h"
-#include "TransformProviders/enum_transformScope.h"
-#include "TransformProviders/TransformProvider.h"
+#include "TransformOperators/enum_transformScope.h"
+#include "TransformOperators/TransformOperator.h"
 
 class TransformEngine: public QAbstractTableModel
 {
     Q_OBJECT
 public:
     explicit TransformEngine(QObject* parent = nullptr);
-    static int addProvider(TransformProvider* provider);
+    static int addProvider(TransformOperator* provider);
 
-    static QString renameFiles();
     static QStringList getSourceUrls();
     static QStringList createTargetUrls();
-    static bool sortItemsBySourceFileName(bool reverseAlphabetical);
     static bool transformIsOrderDependent();
 
-    static void DeleteProviders();
+    static void DeleteAllProviders();
 
     // Instance methods
+    bool sortItemsBySourceFileName(bool reverseAlphabetical);
     int selectProvider(int index);
     int selectScope(transformScope txScope);
     void doTransforms(bool resetModel);
-    QString addTransformItems(QStringList sourceUrls);
+    QString addTransformItems(QStringList sourceUrls, int insertAtIndex);
     bool removeTransformItems(QList<int> rowIndices);
     void clearTransformItems();
+    QString renameFiles();
 
     // ViewModel Functions
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -38,16 +38,15 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
-    void setFileNames();
     Qt::DropActions supportedDropActions() const override;
     bool moveRows(const QModelIndex& parent1, int source_first, int count, const QModelIndex& parent2, int dest) override;
 
 private:
     // TransformEngine() {}    //Static/singleton- not instanced
-    static int selectedProviderIndex;
+    static int selectedEnabledProviderIndex;
     static QIcon folderIcon;
     static transformScope scope;
-    static QList<TransformProvider*> transformProviders;
+    static QList<TransformOperator*> transformOperators;
     static QList<TransformItem> transformItemList;
 };
 

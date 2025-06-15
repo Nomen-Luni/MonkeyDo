@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TransformProvider_SearchReplace</class>
- <widget class="QWidget" name="TransformProvider_SearchReplace">
+ <class>TransformOperator_SearchReplace</class>
+ <widget class="QWidget" name="TransformOperator_SearchReplace">
   <property name="geometry">
    <rect>
     <x>0</x>

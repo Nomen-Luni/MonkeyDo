@@ -1,12 +1,16 @@
 # *I AM ACTIVLY DEVELOPING ON THE MAIN BRANCH (naughty!) - use the last tagged version if you want functional code (i.e. current built release)*
 
-# Bionic Batch Renamer
+# MonkeyDo
 
 A powerful batch file renaming utility built with the Qt technology stack.
 
-Interface heavily inspired by [Thunar's 'bulk renamer'](https://docs.xfce.org/xfce/thunar/bulk-renamer/start) plugin.
+![MonkeyDo.png](/mnt/Data/Computing/Programming/Code/MonkeyDo/Images/MonkeyDo.png)
 
-<img title="" src="./Images/Bionic_Batch_Renamer.png" alt="Bionic_Batch_Renamer.png" width="441">
+
+
+
+
+<img title="" src="file:///mnt/Data/Computing/Programming/Code/MonkeyDo/Images/screenshot.png" alt="Bionic_Batch_Renamer.png" width="441">
 
 #### Creation of installer:
 
@@ -26,15 +30,18 @@ Interface heavily inspired by [Thunar's 'bulk renamer'](https://docs.xfce.org/xf
   - This will add the option 'Batch rename' to the right-click menu in the file manager when multiple files are selected.
 
 - On Ubuntu and other Debian based Linux distributions:
+  
   - Double-click the .deb installation file and install via your package manager. The executable will be located at /usr/local/bin/Batch_Renamer.
 
 - On Arch based Linux distributions:
+  
   - Via [AUR package (Stable Version)](https://aur.archlinux.org/packages/bionic-batch-renamer) or [AUR package (Development Version)](https://aur.archlinux.org/packages/bionic-batch-renamer-git)
   - **_or_** Double-click the .tar installation file and install via your package manager
 
 #### Authors:
 
 Thanks to everyone who has helped out:
+
 - Lee Cooper (chief honcho)
 - Translators:
   - Heimen Stoffels (Dutch)
@@ -43,4 +50,6 @@ Thanks to everyone who has helped out:
   - Carl F (Arch installer)
   - Oliver Kahrmann (AUR build script maintainer)
 
-Plus not to forget all the unnamed heroes who have reported bugs!
+#### Props:
+
+- The authors of [Thunar's 'bulk renamer'](https://docs.xfce.org/xfce/thunar/bulk-renamer/start) plugin, which inspired MonkeyDo's interface.

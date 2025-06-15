@@ -1,19 +1,19 @@
-#ifndef TRANSFORMPROVIDER_NUMBERING_H
-#define TRANSFORMPROVIDER_NUMBERING_H
+#ifndef TRANSFORMOPERATION_NUMBERING_H
+#define TRANSFORMOPERATION_NUMBERING_H
 
-#include "TransformProvider.h"
+#include "TransformOperator.h"
 #include <QWidget>
 #include <QStackedWidget>
 
 namespace Ui {
-class TransformProvider_Numbering;
+class TransformOperator_Numbering;
 }
 
-class TransformProvider_Numbering : public TransformProvider
+class TransformOperator_Numbering : public TransformOperator
 {
 public:
-    explicit TransformProvider_Numbering(QWidget *parent = nullptr);
-    ~TransformProvider_Numbering();
+    explicit TransformOperator_Numbering(QWidget *parent = nullptr);
+    ~TransformOperator_Numbering();
     void updateGUIvars();
     QString transform(const QString& inFullUrl, const QString& in, int index, bool& success);
 
@@ -40,7 +40,7 @@ private:
         spaces
     };
 
-    Ui::TransformProvider_Numbering *ui;
+    Ui::TransformOperator_Numbering *ui;
 
     //QString startWith;
     spacerTypes spacerType;
@@ -51,4 +51,4 @@ private:
     locationTypes location;
 };
 
-#endif // TRANSFORMPROVIDER_NUMBERING_H
+#endif // TRANSFORMOPERATION_NUMBERING_H

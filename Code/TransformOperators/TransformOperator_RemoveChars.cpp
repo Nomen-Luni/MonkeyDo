@@ -1,13 +1,14 @@
-#include "TransformProvider_RemoveChars.h"
-#include "ui_TransformProvider_RemoveChars.h"
+#include "TransformOperator_RemoveChars.h"
+#include "ui_TransformOperator_RemoveChars.h"
 #include "MainWindow/MainWindow.h" //For signal connection
 
-TransformProvider_RemoveChars::TransformProvider_RemoveChars(QWidget *parent)
-    : TransformProvider(parent) //QWidget constructor called via TransformProvider constructor
-    , ui(new Ui::TransformProvider_RemoveChars)
+TransformOperator_RemoveChars::TransformOperator_RemoveChars(QWidget *parent)
+    : TransformOperator(parent) //QWidget constructor called via TransformOperator constructor
+    , ui(new Ui::TransformOperator_RemoveChars)
 {
     ui->setupUi(this);
     displayName=QObject::tr("Remove Characters");
+    ID="REMOVECHARS";
 
     //Connect change events of all contained control to Main Window's 'transformChanged' slot to trigger an update
     connect(ui->fromCharsSpinBox,QOverload<int>::of(&QSpinBox::valueChanged),(MainWindow*)parent, &MainWindow::doTransforms);
@@ -21,12 +22,12 @@ TransformProvider_RemoveChars::TransformProvider_RemoveChars(QWidget *parent)
     //paletteSpinboxError.setColor(QPalette::Base, Qt::red);
 }
 
-TransformProvider_RemoveChars::~TransformProvider_RemoveChars()
+TransformOperator_RemoveChars::~TransformOperator_RemoveChars()
 {
     delete ui;
 }
 
-void TransformProvider_RemoveChars::updateGUIvars()
+void TransformOperator_RemoveChars::updateGUIvars()
 {
     //Read GUI variables
     fromChars=ui->fromCharsSpinBox->value();
@@ -50,7 +51,7 @@ void TransformProvider_RemoveChars::updateGUIvars()
     */
 }
 
-QString TransformProvider_RemoveChars::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
+QString TransformOperator_RemoveChars::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
 {
     QString transformed=in;
     int fromIndex=0;

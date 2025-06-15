@@ -1,19 +1,19 @@
-#ifndef TRANSFORMPROVIDER_CASE_H
-#define TRANSFORMPROVIDER_CASE_H
+#ifndef TRANSFORMOPERATION_CASE_H
+#define TRANSFORMOPERATION_CASE_H
 
-#include "TransformProvider.h"
+#include "TransformOperator.h"
 #include <QWidget>
 #include <QStackedWidget>
 
 namespace Ui {
-class TransformProvider_Case;
+class TransformOperator_Case;
 }
 
-class TransformProvider_Case : public TransformProvider
+class TransformOperator_Case : public TransformOperator
 {
 public:
-    explicit TransformProvider_Case(QWidget *parent = nullptr);
-    ~TransformProvider_Case();
+    explicit TransformOperator_Case(QWidget *parent = nullptr);
+    ~TransformOperator_Case();
     void updateGUIvars();
     QString transform(const QString& inFullUrl, const QString& in, int index, bool& success);
 
@@ -26,10 +26,10 @@ private:
         first_letter_uppercase
     };
 
-    Ui::TransformProvider_Case *ui;
+    Ui::TransformOperator_Case *ui;
     modes mode;
     static QString toTitleCase(const QString& string);
     static QString capitaliseFirstLetter(const QString& string);
 };
 
-#endif // TRANSFORMPROVIDER_CASE_H
+#endif // TRANSFORMOPERATION_CASE_H

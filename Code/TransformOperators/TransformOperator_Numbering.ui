@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TransformProvider_Numbering</class>
- <widget class="QWidget" name="TransformProvider_Numbering">
+ <class>TransformOperator_Numbering</class>
+ <widget class="QWidget" name="TransformOperator_Numbering">
   <property name="geometry">
    <rect>
     <x>0</x>

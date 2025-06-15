@@ -4,8 +4,9 @@
 #include <QApplication>
 #include <QMainWindow>
 #include "TransformEngine/TransformEngine.h"
-#include "TransformProviders/TransformProvider.h"
-//#include "FileNameTableModel/FileNameTableModel.h"
+#include "TransformOperators/TransformOperator.h"
+#include "SettingsController/TransformOperatorInfo.h"
+#include "SettingsDialog/SettingsDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,9 +22,13 @@ public:
     QString setInitialTransformItems(QStringList urls);
 
 private:
-    void addProvider(TransformProvider* provider);
+    static SettingsDialog* pSettingsDialog;
+    void addOperation(TransformOperator* pTransformOperator, int transformEngineIndex);
     void removeProviders();
     TransformEngine transformEngine;
+    QList<TransformOperatorInfo> transformOperatorInfoList;
+    QList<int> orderedActiveProviderIndexList; // Is this still needed?
+    void updateOperationSelectComboboxFromSettings(bool init);
     Ui::MainWindow *ui;
 
 public slots:
@@ -31,12 +36,13 @@ public slots:
     void tableSortOrderChanged(int logicalIndex, Qt::SortOrder sortOrder);
 
 private slots:
-    void on_operationComboBox_currentIndexChanged(int index);
-    void on_AddPushButton_clicked();
-    void on_RemovePushButton_clicked();
-    void on_clearPushButton_clicked();
-    void on_renamePushButton_clicked();
-    void on_aboutButton_clicked();
-    void on_targetComboBox_currentIndexChanged(int index);
+    void on_operationSelect_currentIndexChanged(int index);
+    void on_AddButton_clicked();
+    void on_RemoveButton_clicked();
+    void on_ClearButton_clicked();
+    void on_RenameButton_clicked();
+    void on_AboutButton_clicked();
+    void on_scopeSelect_currentIndexChanged(int index);
+    void on_SettingsButton_clicked();
 };
 #endif // MAINWINDOW_H

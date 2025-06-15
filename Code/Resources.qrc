@@ -1,9 +1,9 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-        <file>Translations/Batch_Renamer_en_GB.qm</file>
-        <file>Translations/Batch_Renamer_nl.qm</file>
-        <file>Translations/Batch_Renamer_de.qm</file>
+        <file>Translations/MonkeyDo_en_GB.qm</file>
+        <file>Translations/MonkeyDo_nl.qm</file>
+        <file>Translations/MonkeyDo_de.qm</file>
     </qresource>
 </RCC>
 

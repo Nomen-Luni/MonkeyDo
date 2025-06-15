@@ -1,13 +1,14 @@
-#include "TransformProvider_Numbering.h"
-#include "ui_TransformProvider_Numbering.h"
+#include "TransformOperator_Numbering.h"
+#include "ui_TransformOperator_Numbering.h"
 #include "MainWindow/MainWindow.h" //For signal connection
 
-TransformProvider_Numbering::TransformProvider_Numbering(QWidget *parent)
-    : TransformProvider(parent) //QWidget constructor called via TransformProvider constructor
-    , ui(new Ui::TransformProvider_Numbering)
+TransformOperator_Numbering::TransformOperator_Numbering(QWidget *parent)
+    : TransformOperator(parent) //QWidget constructor called via TransformOperator constructor
+    , ui(new Ui::TransformOperator_Numbering)
 {
     ui->setupUi(this);
     displayName=QObject::tr("Numbering");
+    ID="NUMBERING";
 
     // Let's program know that if order of items in list changes, output names need recalculating.
     transformIsOrderDependent=true; // Numbering depends on position.
@@ -20,12 +21,12 @@ TransformProvider_Numbering::TransformProvider_Numbering(QWidget *parent)
     connect(ui->locationComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),(MainWindow*)parent, &MainWindow::doTransforms);
 }
 
-TransformProvider_Numbering::~TransformProvider_Numbering()
+TransformOperator_Numbering::~TransformOperator_Numbering()
 {
     delete ui;
 }
 
-void TransformProvider_Numbering::updateGUIvars()
+void TransformOperator_Numbering::updateGUIvars()
 {
     spacerType=(spacerTypes)ui->spacerComboBox->currentIndex();
     padCharacterType=(padCharacterTypes)ui->padCharacterComboBox->currentIndex();
@@ -34,7 +35,7 @@ void TransformProvider_Numbering::updateGUIvars()
     location=(locationTypes)ui->locationComboBox->currentIndex();
 }
 
-QString TransformProvider_Numbering::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
+QString TransformOperator_Numbering::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
 {
     QString transformed;
     QString numberString;

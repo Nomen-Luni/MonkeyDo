@@ -1,29 +1,30 @@
-#include "TransformProvider_Case.h"
-#include "ui_TransformProvider_Case.h"
+#include "TransformOperator_Case.h"
+#include "ui_TransformOperator_Case.h"
 #include "MainWindow/MainWindow.h" //For signal connection
 
-TransformProvider_Case::TransformProvider_Case(QWidget *parent)
-    : TransformProvider(parent) //QWidget constructor called via TransformProvider constructor
-    , ui(new Ui::TransformProvider_Case)
+TransformOperator_Case::TransformOperator_Case(QWidget *parent)
+    : TransformOperator(parent) //QWidget constructor called via TransformOperator constructor
+    , ui(new Ui::TransformOperator_Case)
 {
     ui->setupUi(this);
     displayName=QObject::tr("Uppercase / Lowercase");
+    ID="CASE";
 
     //Connect change events of all contained control to Main Window's 'doTransforms' slot to trigger an update
     connect(ui->modeComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),(MainWindow*)parent, &MainWindow::doTransforms);
 }
 
-TransformProvider_Case::~TransformProvider_Case()
+TransformOperator_Case::~TransformOperator_Case()
 {
     delete ui;
 }
 
-void TransformProvider_Case::updateGUIvars()
+void TransformOperator_Case::updateGUIvars()
 {
     mode=(modes)(ui->modeComboBox->currentIndex());
 }
 
-QString TransformProvider_Case::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
+QString TransformOperator_Case::transform(const QString& inFullUrl, const QString& in, int index, bool& success)
 {
     QString transformed;
     (void)inFullUrl;
@@ -49,7 +50,7 @@ QString TransformProvider_Case::transform(const QString& inFullUrl, const QStrin
     return transformed;
 }
 
-QString TransformProvider_Case::toTitleCase(const QString& string)
+QString TransformOperator_Case::toTitleCase(const QString& string)
 {
     QStringList parts = string.split(' ', Qt::SkipEmptyParts);
     for (int i = 0; i < parts.size(); ++i)
@@ -60,7 +61,7 @@ QString TransformProvider_Case::toTitleCase(const QString& string)
     return parts.join(" ");
 }
 
-QString TransformProvider_Case::capitaliseFirstLetter(const QString& string)
+QString TransformOperator_Case::capitaliseFirstLetter(const QString& string)
 {
     QString result=string.toLower();
     int index=0;

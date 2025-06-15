@@ -18,16 +18,6 @@ FilesAndDirsDialog::FilesAndDirsDialog(QWidget *parent, const QString &caption, 
     }
 }
 
-/*
-FilesAndDirsDialog::FilesAndDirsDialog(QWidget *parent, Qt::WindowFlags flags) : QFileDialog(parent,flags)
-{
-}
-
-FilesAndDirsDialog::~FilesAndDirsDialog()
-{
-}
-*/
-
 void FilesAndDirsDialog::accept()
 {
     QStringList files = selectedFiles();

@@ -6,7 +6,7 @@
 //int TransformEngine::numProviders=0;
 //int TransformEngine::selectedProviderIndex=0;
 //transformScope TransformEngine::scope=transformScope::name_only;
-//TransformProvider* TransformEngine::transformProviders[maxTransformProviders];
+//TransformOperator* TransformEngine::TransformOperators[maxTransformOperators];
 //QStringList TransformEngine::sourceFileNamesList;
 //QStringList TransformEngine::targetFileNamesList;
 //QStringList TransformEngine::sourceUrlsList;
@@ -43,6 +43,5 @@ void TransformItem::SetSourceUrl(QString sourceUrl, bool checkIfDir)
     {
         this->isDir=fileInfo.isDir();
     }
-    this->targetFileName="go";
 }
 

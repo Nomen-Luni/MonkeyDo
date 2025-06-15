@@ -25,6 +25,9 @@
   <property name="windowTitle">
    <string>Batch Renamer</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="edit-rename"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -36,7 +39,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QPushButton" name="AddPushButton">
+       <widget class="QToolButton" name="AddButton">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -64,10 +67,16 @@
         <property name="icon">
          <iconset theme="list-add"/>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="RemovePushButton">
+       <widget class="QToolButton" name="RemoveButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -86,10 +95,16 @@
         <property name="icon">
          <iconset theme="list-remove"/>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="clearPushButton">
+       <widget class="QToolButton" name="ClearButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -100,7 +115,13 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="edit-clear"/>
+         <iconset theme="edit-clear-all"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -121,12 +142,34 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="aboutButton">
+       <widget class="QToolButton" name="SettingsButton">
         <property name="text">
-         <string>?</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="applications-system-symbolic"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="AboutButton">
+        <property name="text">
+         <string/>
         </property>
         <property name="icon">
          <iconset theme="help-about"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -196,7 +239,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QComboBox" name="operationComboBox">
+       <widget class="QComboBox" name="operationSelect">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -219,7 +262,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="targetComboBox">
+       <widget class="QComboBox" name="scopeSelect">
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -292,19 +335,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="renamePushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Rename</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="closePushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -314,6 +344,19 @@
         </property>
         <property name="text">
          <string>Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="RenameButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Rename</string>
         </property>
        </widget>
       </item>

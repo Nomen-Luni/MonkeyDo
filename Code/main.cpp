@@ -3,7 +3,6 @@
 #include <QLocale>
 #include <QMessageBox>
 #include <QTranslator>
-// #include "TransformEngine/TransformEngine.h"
 #include "Styling/SingleClickWorkaroundProxyStyle.h"
 
 int main(int argc, char *argv[])
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     QLocale locale=QLocale::system();
-    QString translationFileName=":/Translations/Batch_Renamer_"+locale.name()+".qm";
+    QString translationFileName=":/Translations/MonkeyDo_"+locale.name()+".qm";
     if (translator.load(translationFileName))
     {
         app.installTranslator(&translator);
