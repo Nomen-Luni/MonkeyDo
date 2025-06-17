@@ -4,13 +4,13 @@
 
 A powerful batch file renaming utility built with the Qt technology stack.
 
-![MonkeyDo.png](/mnt/Data/Computing/Programming/Code/MonkeyDo/Images/MonkeyDo.png)
+![MonkeyDo.png](./Images/MonkeyDo.png)
 
 
 
 
 
-<img title="" src="file:///mnt/Data/Computing/Programming/Code/MonkeyDo/Images/screenshot.png" alt="Bionic_Batch_Renamer.png" width="441">
+![Batch_renamer.png](/Images/screenshot.png" alt="Bionic_Batch_Renamer.png")
 
 #### Creation of installer:
 
